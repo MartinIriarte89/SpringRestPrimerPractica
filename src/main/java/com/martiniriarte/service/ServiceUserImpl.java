@@ -28,4 +28,9 @@ public class ServiceUserImpl implements ServiceUser {
 	public void deleteUser(User user) {
 		userDAO.delete(user);
 	}
+
+	@Override
+	public void registerUser(User user) {
+		userDAO.save(user);
+	}
 }

@@ -20,12 +20,10 @@ async function cargarUsuarios() {
 	});
 	const usuarios = await request.json();
 
-	
-
 	let listadoHtml = '';
 	for (let usuario of usuarios) {
 		let botonEliminar = '<a href="#" onclick="eliminarUsuario(' + usuario.id + ')" class="btn btn-danger btn-circle btn-sm"><i class="fas fa-trash"></i></a>';
-		
+
 		let usuarioHtml = '<tr><td>' + usuario.id + '</td><td>' + usuario.name + ' ' + usuario.lastName + '</td><td>'
 			+ usuario.email + '</td><td>'
 			+ usuario.telephone + '</td><td>' + botonEliminar + '</td></tr>'
@@ -35,12 +33,14 @@ async function cargarUsuarios() {
 	document.querySelector('#usuarios tbody').outerHTML = listadoHtml
 }
 
-async function eliminarUsuario(id){
-	
-	if(!confirm('¿Desea eliminar este usuario?')){
+
+//Elimina el usuario dado
+async function eliminarUsuario(id) {
+
+	if (!confirm('¿Desea eliminar este usuario?')) {
 		return;
 	}
-	
+
 	await fetch('usuarios/' + id, {
 		method: 'DELETE',
 		headers: {
@@ -49,6 +49,5 @@ async function eliminarUsuario(id){
 		},
 
 	});
-	
 	location.reload();
 }

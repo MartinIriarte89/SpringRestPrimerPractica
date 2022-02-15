@@ -6,4 +6,5 @@ import com.martiniriarte.models.User;
 
 public interface UserDAO extends JpaRepository<User, Long>{
 	
+	boolean existsByEmailAndPassword(String email, String password);
 }

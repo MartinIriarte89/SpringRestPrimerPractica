@@ -11,4 +11,6 @@ public interface ServiceUser {
 	public User getUser(Long id);
 
 	public void deleteUser(User user);
+
+	public void registerUser(User user);
 }
