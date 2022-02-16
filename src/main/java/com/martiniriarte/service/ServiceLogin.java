@@ -4,6 +4,6 @@ import com.martiniriarte.models.User;
 
 public interface ServiceLogin {
 
-	void authEmailPassword(User user);
+	boolean authEmailPassword(User user);
 
 }

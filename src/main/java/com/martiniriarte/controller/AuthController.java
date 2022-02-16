@@ -15,8 +15,12 @@ public class AuthController {
 	ServiceLogin servLogin;
 	
 	@PostMapping("login")
-	public void login(@RequestBody User user) {
-		servLogin.authEmailPassword(user);
+	public String login(@RequestBody User user) {
+		if (servLogin.authEmailPassword(user)) {
+			return "OK";
+		}
+		
+		return "FAIL";
 	}
 	
 }

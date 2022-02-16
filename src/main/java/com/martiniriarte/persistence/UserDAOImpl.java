@@ -25,11 +25,22 @@ public class UserDAOImpl {
 			User userCast = (User) user;
 			users.add(userCast);
 		}
-		return users; 	
+		return users;
 	}
-	
+
 	public void delete(Long id) {
 		User user = entityManager.find(User.class, id);
 		entityManager.remove(user);
+	}
+
+	public void register(User user) {
+		entityManager.merge(user);
+	}
+
+	public boolean authEmailAndPassword(User user) {
+		String query = "FROM User WHERE email = :email AND password = :password";
+		List<User> lista = entityManager.createQuery(query).setParameter("email", user.getEmail())
+				.setParameter("password", user.getPassword()).getResultList();
+		return lista.isEmpty();
 	}
 }

@@ -5,17 +5,21 @@ import org.springframework.stereotype.Service;
 
 import com.martiniriarte.models.User;
 import com.martiniriarte.persistence.UserDAO;
+import com.martiniriarte.util.Encrypt;
 
 @Service
 public class ServiceLoginImpl implements ServiceLogin {
 
 	@Autowired
 	UserDAO userDAO;
-	
-	@Override
-	public void authEmailPassword(User user) {
-		System.out.println(userDAO.existsByEmailAndPassword(user.getEmail(), user.getPassword()));
-		
-	}
 
+	@Override
+	public boolean authEmailPassword(User user) {
+		boolean authCorret = false;
+
+		if (userDAO.existsByEmail(user.getEmail())) {
+			authCorret = Encrypt.checkPassword(userDAO.getPasswordByEmail(user.getEmail()), user.getPassword());
+		}
+		return authCorret;
+	}
 }

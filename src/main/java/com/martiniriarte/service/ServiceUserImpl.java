@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.martiniriarte.models.User;
 import com.martiniriarte.persistence.UserDAO;
+import com.martiniriarte.util.Encrypt;
 
 @Service
 public class ServiceUserImpl implements ServiceUser {
@@ -31,6 +32,7 @@ public class ServiceUserImpl implements ServiceUser {
 
 	@Override
 	public void registerUser(User user) {
+		user.setPassword(Encrypt.encryptPassword(user.getPassword()));
 		userDAO.save(user);
 	}
 }
