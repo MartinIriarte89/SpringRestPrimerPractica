@@ -22,6 +22,7 @@ public class User implements Serializable{
 	private String telephone;
 	private String email;
 	private String password;
+	private boolean role;
 	
 	public User(Long id, String name, String lastName, String telephone, String email) {
 		this.id = id;

@@ -9,6 +9,11 @@ public interface UserDAO extends JpaRepository<User, Long>{
 	
 	boolean existsByEmail(String email);
 	
+	User getByEmail(String email);
+	
 	@Query("SELECT u.password FROM User u WHERE email = :email")
 	String getPasswordByEmail(String email);
+	
+	@Query("SELECT u.role FROM User u WHERE id = :id")
+	boolean isAuthorized(Long id);
 }

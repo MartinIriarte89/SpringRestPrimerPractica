@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.martiniriarte.models.User;
 import com.martiniriarte.service.ServiceLogin;
+import com.martiniriarte.service.ServiceValidation;
 
 @RestController
 public class AuthController {
@@ -14,10 +15,15 @@ public class AuthController {
 	@Autowired
 	ServiceLogin servLogin;
 	
+	@Autowired
+	ServiceValidation servValid;
+	
 	@PostMapping("login")
 	public String login(@RequestBody User user) {
 		if (servLogin.authEmailPassword(user)) {
-			return "OK";
+			String tokenJwt = servValid.getTokenJWT(user);
+			
+			return tokenJwt;
 		}
 		
 		return "FAIL";

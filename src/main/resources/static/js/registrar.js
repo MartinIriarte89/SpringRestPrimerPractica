@@ -24,4 +24,7 @@ async function registrarUsuario() {
 		},
 	body: JSON.stringify(datos)
 	});
+	
+	alert('¡La cuenta fue creada exitosamente!')
+	window.location.href='login.html'
 }
