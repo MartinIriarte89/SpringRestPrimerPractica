@@ -14,19 +14,19 @@ public class AuthController {
 
 	@Autowired
 	ServiceLogin servLogin;
-	
+
 	@Autowired
 	ServiceValidation servValid;
-	
+
 	@PostMapping("login")
 	public String login(@RequestBody User user) {
 		if (servLogin.authEmailPassword(user)) {
 			String tokenJwt = servValid.getTokenJWT(user);
-			
+
 			return tokenJwt;
 		}
-		
+
 		return "FAIL";
 	}
-	
+
 }

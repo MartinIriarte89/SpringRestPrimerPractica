@@ -19,36 +19,38 @@ import com.martiniriarte.service.ServiceValidation;
 
 @RestController
 public class UserController {
-	
+
 	@Autowired
 	ServiceUser servUser;
-	
+
 	@Autowired
 	ServiceValidation servValid;
 
-	
 	@GetMapping("usuarios/{id}")
 	public User getUser(@PathVariable Long id) {
 		return servUser.getUser(id);
 	}
 
 	@RequestMapping("usuarios")
-	public List<User> getUsers(@RequestHeader(value="Authorization") String token) {
-		if(!servValid.isAuthorized(token)) {
+	public List<User> getUsers(@RequestHeader(value = "Authorization") String token) {
+		if (!servValid.isAuthorized(token)) {
+			
 			return new ArrayList<>();
 		}
-		
+		System.out.println(token);
 		return servUser.getUsers();
 	}
-	
+
 	@DeleteMapping("usuarios/{id}")
-	public void deleteUser(@PathVariable Long id) {
+	public void deleteUser(@PathVariable Long id, @RequestHeader(value = "Authorization") String token) {
 		User user = servUser.getUser(id);
-		servUser.deleteUser(user);
+		if (servValid.isAuthorized(token)) {
+			servUser.deleteUser(user);
+		}
 	}
-	
+
 	@PostMapping("usuarios")
 	public void registerUser(@RequestBody User user) {
 		servUser.registerUser(user);
-	}	
+	}
 }

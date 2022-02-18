@@ -2,16 +2,20 @@
 $(document).ready(function() {
 
 	cargarUsuarios();
-
 	$('#usuarios').DataTable();
-
+	actualizarNombreCompletoUsuario();
 });
+
+function actualizarNombreCompletoUsuario(){
+	document.getElementById('txtNombreCompleto').outerHTML = localStorage.email
+}
 
 function getHeaders() {
 	return {
 		'Accept': 'application/json',
 		'Content-Type': 'application/json',
 		'Authorization': localStorage.token
+	
 	};
 }
 

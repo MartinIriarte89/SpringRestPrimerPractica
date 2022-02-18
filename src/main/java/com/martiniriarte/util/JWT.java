@@ -10,83 +10,106 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm; 
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 
 @Component
 public class JWT {
 
 	@Value("${security.jwt.secret}")
 	private String key;
-	
+
 	@Value("${security.jwt.issuer}")
 	private String issuer;
-	
+
 	@Value("${security.jwt.ttlMillis}")
 	private Long ttlMillis;
-	
-	//private final Logger log = LoggerFactory.getLogger(JWT.class);
-	
+
+	// private final Logger log = LoggerFactory.getLogger(JWT.class);
+
 	/**
 	 * Crear un nuevo token
 	 * 
-	 *  @param id
-	 *  @param subject
-	 *  @return
+	 * @param id
+	 * @param subject
+	 * @return
 	 */
-	 public String create(String id, String subject) {
+	public String create(String id, String subject) {
 
-	        // El algoritmo de firma JWT utilizado para firmar el token
-	       
-		 	SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-				 
-	        long nowMillis = System.currentTimeMillis();
-	        Date now = new Date(nowMillis);
+		// El algoritmo de firma JWT utilizado para firmar el token
 
-	        //  Firma JWT con nuestra ApiKey secreta 
-	        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(key);
-	        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
-	        // establecer las reclamaciones JWT
-	        JwtBuilder builder = Jwts.builder().setId(id).setIssuedAt(now).setSubject(subject).setIssuer(issuer)
-	                .signWith(signatureAlgorithm, signingKey);
+		long nowMillis = System.currentTimeMillis();
+		Date now = new Date(nowMillis);
 
-	        if (ttlMillis >= 0) {
-	            long expMillis = nowMillis + ttlMillis;
-	            Date exp = new Date(expMillis);
-	            builder.setExpiration(exp);
-	        }
+		// Firma JWT con nuestra ApiKey secreta
+		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(key);
+		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
-	        // Crea el JWT y lo serializa en una cadena compacta segura para URL
-	        return builder.compact();
-	    }
+		// establecer las reclamaciones JWT
+		JwtBuilder builder = Jwts.builder().setId(id).setIssuedAt(now).setSubject(subject).setIssuer(issuer)
+				.signWith(signatureAlgorithm, signingKey);
 
-	    /**
-	     * Método para validar y leer el JWT
-	     *
-	     * @param jwt
-	     * @return
-	     */
-	    public String getValue(String jwt) {
-	        // Esta línea arrojará una excepción si no es un JWS firmado (como se esperaba)
-	        Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key))
-	                .parseClaimsJws(jwt).getBody();
+		if (ttlMillis >= 0) {
+			long expMillis = nowMillis + ttlMillis;
+			Date exp = new Date(expMillis);
+			builder.setExpiration(exp);
+		}
 
-	        return claims.getSubject();
-	    }
+		// Crea el JWT y lo serializa en una cadena compacta segura para URL
+		return builder.compact();
+	}
 
-	    /**
-	     * Método para validar y leer el JWT
-	     *
-	     * @param jwt
-	     * @return
-	     */
-	    public String getKey(String jwt) {
-	    //Esta línea arrojará una excepción si no es un JWS firmado (como se esperaba)
-	        Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key))
-	                .parseClaimsJws(jwt).getBody();
+	/**
+	 * Método para validar y leer el JWT
+	 *
+	 * @param jwt
+	 * @return
+	 */
+	public String getValue(String jwt) {
+		// Esta línea arrojará una excepción si no es un JWS firmado (como se esperaba)
+		Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key)).parseClaimsJws(jwt)
+				.getBody();
 
-	        return claims.getId();
-	    }
+		return claims.getSubject();
+	}
+
+	/**
+	 * Método para validar y leer el JWT
+	 *
+	 * @param jwt
+	 * @return
+	 */
+	public String getKey(String jwt) {
+		// Esta línea arrojará una excepción si no es un JWS firmado (como se esperaba)
+		Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key)).parseClaimsJws(jwt)
+				.getBody();
+
+		return claims.getId();
+	}
+
+	public boolean validateToken(String jwt) {
+		try {
+			Jwts.parser().setSigningKey(key).parseClaimsJws(jwt);
+			return true;
+			// token mal formado
+		} catch (MalformedJwtException e) {
+			// token no soportado
+		} catch (UnsupportedJwtException e) {
+			// token expirado
+		} catch (ExpiredJwtException e) {
+			// token vacio
+		} catch (IllegalArgumentException e) {
+			// fail en la firma
+		} catch (SignatureException e) {
+
+		}
+		return false;
+	}
 }

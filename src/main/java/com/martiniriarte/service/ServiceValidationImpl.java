@@ -29,5 +29,4 @@ public class ServiceValidationImpl implements ServiceValidation {
 
 		return userDAO.isAuthorized(idUser);
 	}
-
 }
